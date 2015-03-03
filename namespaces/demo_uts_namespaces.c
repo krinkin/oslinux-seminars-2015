@@ -7,6 +7,8 @@
 
   http://lwn.net/Articles/531245/
 
+	kkv -- diagnostic
+
 */
 #define _GNU_SOURCE
 #include <sys/wait.h>
@@ -22,6 +24,24 @@
 
 #define errExit(msg)    do { perror(msg); exit(EXIT_FAILURE); \
                         } while (0)
+
+
+void cat(const char *cmd, const char *comment) {
+	FILE *p = NULL;
+	char buf[BUFSIZ];
+	
+	p = popen(cmd,"r");
+	
+	printf("==== %s ====\n",comment);
+
+
+	while (NULL != fgets(buf,BUFSIZ,p))
+	{
+		printf("%s",buf);
+	}
+	fclose(p);
+}
+
 
 static int              /* Start function for cloned child */
 childFunc(void *arg)
@@ -42,8 +62,10 @@ childFunc(void *arg)
     /* Keep the namespace open for a while, by sleeping.
        This allows some experimentation--for example, another
        process might join the namespace. */
-     
+		
     sleep(100);
+		
+
 
     return 0;           /* Terminates child */
 }
@@ -57,6 +79,7 @@ main(int argc, char *argv[])
 {
     pid_t child_pid;
     struct utsname uts;
+		char cmd[BUFSIZ];
 
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <child-hostname>\n", argv[0]);
@@ -79,11 +102,20 @@ main(int argc, char *argv[])
     sleep(1);           /* Give child time to change its hostname */
 
     /* Display the hostname in parent's UTS namespace. This will be 
-       different from the hostname in child's UTS namespace. */
+       different from the hostname in child's UTS namespace. */	 
 
     if (uname(&uts) == -1)
         errExit("uname");
     printf("uts.nodename in parent: %s\n", uts.nodename);
+
+
+		
+		sprintf(cmd,"ls -l /proc/%d/ns",getpid());
+		cat(cmd,"parent namespaces");
+
+		sprintf(cmd,"ls -l /proc/%d/ns",child_pid);
+		cat(cmd,"child namespaces");
+
 
     if (waitpid(child_pid, NULL, 0) == -1)      /* Wait for child */
         errExit("waitpid");
