@@ -19,28 +19,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "utils.h"
+
 /* A simple error-handling function: print an error message based
    on the value in 'errno' and terminate the calling process */
 
 #define errExit(msg)    do { perror(msg); exit(EXIT_FAILURE); \
                         } while (0)
-
-
-void cat(const char *cmd, const char *comment) {
-	FILE *p = NULL;
-	char buf[BUFSIZ];
-	
-	p = popen(cmd,"r");
-	
-	printf("==== %s ====\n",comment);
-
-
-	while (NULL != fgets(buf,BUFSIZ,p))
-	{
-		printf("%s",buf);
-	}
-	fclose(p);
-}
 
 
 static int              /* Start function for cloned child */
