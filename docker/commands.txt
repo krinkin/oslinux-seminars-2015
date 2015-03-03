@@ -1,0 +1,14 @@
+== installation
+
+sudo grep device-mapper /proc/devices
+sudo modprobe dm_mod
+sudo sh -c "echo deb https://get.docker.io/ubuntu docker main >/etc/apt/sources.list.d/docker.list"
+whereis curl
+sudo apt-get -y install curl
+curl -s https://get.docker.io/gpg | sudo apt-key add -
+sudo apt-get update
+sudo apt-get install lxc-docker
+sudo docker info
+
+
+
