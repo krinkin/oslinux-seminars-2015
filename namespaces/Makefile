@@ -1,5 +1,4 @@
 LIBS = -lcap
-LDFLAGS=sss
 
 SRC=$(wildcard *.c)
 EXE=$(SRC:.c=)
@@ -12,6 +11,6 @@ EXE=$(SRC:.c=)
 all: $(EXE)
 
 clean:
-	echo ${EXE}
+	rm ${EXE}
 
 
