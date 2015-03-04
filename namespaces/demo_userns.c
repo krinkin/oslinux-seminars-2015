@@ -19,25 +19,27 @@
 #define errExit(msg)    do { perror(msg); exit(EXIT_FAILURE); \
                         } while (0)
 
-static int                      /* Startup function for cloned child */
-childFunc(void *arg)
-{
+
+void print_my_caps() {
     cap_t caps;
 
-    for (;;) {
         printf("eUID = %ld;  eGID = %ld;  ",
                 (long) geteuid(), (long) getegid());
 
         caps = cap_get_proc();
         printf("capabilities: %s\n", cap_to_text(caps, NULL));
 
-        if (arg == NULL)
-            break;
 
-        sleep(5);
-    }
+}
 
-    return 0;
+
+static int                      /* Startup function for cloned child */
+childFunc(void *arg)
+{
+ 
+ print_my_caps();
+ sleep(5);
+ return 0;
 }
 
 #define STACK_SIZE (1024 * 1024)
@@ -50,6 +52,8 @@ main(int argc, char *argv[])
     pid_t pid;
 
     /* Create child; child commences execution in childFunc() */
+ 
+    print_my_caps();
 
     pid = clone(childFunc, child_stack + STACK_SIZE,    /* Assume stack
                                                            grows downward */
