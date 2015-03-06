@@ -49,7 +49,7 @@ childFunc(void *arg)
 
         char mount_point[PATH_MAX];
 
-        snprintf(mount_point, PATH_MAX, "/proc%c", (char) ('0' + level));
+        snprintf(mount_point, PATH_MAX, "./multi_proc%c", (char) ('0' + level));
 
         mkdir(mount_point, 0555);       /* Create directory for mount point */
         if (mount("proc", mount_point, "proc", 0, NULL) == -1)

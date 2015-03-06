@@ -1,0 +1,4 @@
+#!/bin/sh
+
+echo '0 1000 1' >/proc/$1/uid_map 
+echo '0 1000 1' >/proc/$1/gid_map

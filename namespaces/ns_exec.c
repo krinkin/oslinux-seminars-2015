@@ -30,7 +30,7 @@ main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    fd = open(argv[1], O_RDONLY);   /* Get descriptor for namespace */
+    fd = open("./uts", O_RDONLY);   /* Get descriptor for namespace */
     if (fd == -1)
         errExit("open");
 

@@ -19,12 +19,13 @@
 #define errExit(msg)    do { perror(msg); exit(EXIT_FAILURE); \
                         } while (0)
 
+long PPID,PID;
 
 void print_my_caps() {
     cap_t caps;
 
-        printf("eUID = %ld;  eGID = %ld;  ",
-                (long) geteuid(), (long) getegid());
+        printf("eUID = %ld;  eGID = %ld; PPID=%ld; PID=%ld  ",
+                (long) geteuid(), (long) getegid(),PPID,(long)getpid());
 
         caps = cap_get_proc();
         printf("capabilities: %s\n", cap_to_text(caps, NULL));
@@ -36,9 +37,10 @@ void print_my_caps() {
 static int                      /* Startup function for cloned child */
 childFunc(void *arg)
 {
- 
- print_my_caps();
- sleep(5);
+ for(;;) {
+  	print_my_caps();
+  	sleep(5);
+	}
  return 0;
 }
 
@@ -49,21 +51,20 @@ static char child_stack[STACK_SIZE];    /* Space for child's stack */
 int
 main(int argc, char *argv[])
 {
-    pid_t pid;
-
     /* Create child; child commences execution in childFunc() */
- 
-    print_my_caps();
 
-    pid = clone(childFunc, child_stack + STACK_SIZE,    /* Assume stack
+		PPID = getpid();
+		PID = clone(childFunc, child_stack + STACK_SIZE,    /* Assume stack
                                                            grows downward */
                 CLONE_NEWUSER | SIGCHLD, argv[1]);
-    if (pid == -1)
+    if (PID == -1)
         errExit("clone");
+    
+		print_my_caps();
 
     /* Parent falls through to here.  Wait for child. */
 
-    if (waitpid(pid, NULL, 0) == -1)
+    if (waitpid(PID, NULL, 0) == -1)
         errExit("waitpid");
 
     exit(EXIT_SUCCESS);

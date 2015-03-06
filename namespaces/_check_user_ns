@@ -1,0 +1,2 @@
+#!/bin/sh
+ps -C demo_userns -o 'pid uid comm'
